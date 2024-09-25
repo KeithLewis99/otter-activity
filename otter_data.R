@@ -48,6 +48,25 @@ options(dplyr.print_max = 1e9)
 df_act <- read_excel("data/camera_activity_5-11-2014.xlsx")
 str(df_act)
 
+# most of the data are date/time/site; the rest is temp and otters
+
+unique(df_act$season) # not sure if this needs to be changed
+# deployment_date and retrieval date are in a terrible format and don't quite match with date.  There is also a doy, day of study, month, timeofday (h:mm:ss) time.of.day (? PosicX??), hour, year, day.night.
+# hours and days seem to be how long the camera was out
+
+unique(df_act$year) # 2012, 2013, 2014
+
+# site has a number and name
+unique(df_act$site_name)
+df_act$site_name <- as.factor(df_act$site_name)
+
+summary(df_act)
+
+# temperature appears to be in F and C
+
+# Otters are detected and number
+plot(density(df_act$numberofOtter))
+
 
 ## latrine distributions ----
 df_lat <- read_excel("data/latrine_distributions_29-7-2014.xlsx", sheet = "original")
