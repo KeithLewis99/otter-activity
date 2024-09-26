@@ -28,6 +28,7 @@ if(!dir.exists("refs"))dir.create("refs") #for rmd report
 #libraries
 #library(readr)
 library(readxl)
+library(lubridate)
 # library(dplyr)
 # library(tidyr)
 # library(ggplot2)
@@ -62,16 +63,40 @@ df_act$site_name <- as.factor(df_act$site_name)
 
 summary(df_act)
 
+unique(df_act$month)
+
+
+df_act$month[df_act$month == "Feburary"] <- "February"
+
+unique(df_act$month)
+barplot(prop.table(table(df_act$month)))
+# probably want to order this by Month so change with lubridate I think- 
+
+# no records of doy or day of study from 11169 onwards 
+plot(density(df_act$doy, na.rm = T))
+df_act[is.na(df_act$doy), 10]
+
 # temperature appears to be in F and C
+
 
 # Otters are detected and number
 plot(density(df_act$numberofOtter))
 
 
 ## latrine distributions ----
+# going to need Dave's help with this!!!
 df_lat <- read_excel("data/latrine_distributions_29-7-2014.xlsx", sheet = "original")
 str(df_lat)
 
 ## camera functioning ----
+### gives camera and dates deployed with number days out and days captured which I think is how many days of data.  NA means a "camera not set up" but in some cases, its blank.  Card filled seems to happen when days_capture << days_out.  But camera malfuction can also cause this problem - see Cote about this.
+# "camera didn’t trigger after" - not sure what this means?
+
+# should filter out records based on camera malfunction and otehr criteria?
+# do we need to extract date or is this in df_act?
 df_cam <- read_excel("data/Camera_functioning.xlsx")
 str(df_cam)
+View(df_cam)
+unique(df_cam$year)
+df_cam$days_out <- as.numeric(df_cam$days_out)
+summary(df_cam$days_out)
