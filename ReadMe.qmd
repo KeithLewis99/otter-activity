@@ -8,9 +8,17 @@ editor: visual
 
 A converstation with Dave Cote led to him telling me about some unfinished otter work that he had been involved with. He sent me with "otter analysis notes" and "Otter camera paper" on 2024-08-20. On 2024-09-23, he sent me some data sets. I set up a github account and a Rproject. The original data sets are in the ../CAFE/projects/otterTNNP/original_data while the data files to be modified for analysis Rproject is in ../otterTNNP/otter-activity/data. The only modifications are changing the variable names and making .csv files
 
--   need some metadata for this
+## Data
 
-Used readxl to bring data in. Got the following warning. the 'pm' is what is causing the problem followed by 2 blank values. I just deleted this in Excel.
+### metadata
+
+Need some metadata for this
+
+### data clean up
+
+This is going to take a lot of work!
+
+Used readxl to bring data in. Got the following warning. the 'pm' is what is causing the problem followed by 2 blank values. I just deleted this in Excel but original data remains in folder outside of project (see above).
 
 ```         
 Warning messages:
@@ -19,13 +27,7 @@ Warning messages:
 3: Expecting date in N13500 / R13500C14: got '16:37:00 PM' 
 ```
 
-## Running Code
-
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
-
-```{r}
-1 + 1
-```
+## Analyses
 
 You can add options to executable code like this
 
