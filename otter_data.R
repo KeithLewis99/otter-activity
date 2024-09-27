@@ -29,8 +29,9 @@ if(!dir.exists("refs"))dir.create("refs") #for rmd report
 #library(readr)
 library(readxl)
 library(lubridate)
+library(magrittr)
 # library(dplyr)
-# library(tidyr)
+#library(tidyr)
 # library(ggplot2)
 # library(plotly)
 # library(purrr)
@@ -86,7 +87,14 @@ plot(density(df_act$numberofOtter))
 ## latrine distributions ----
 # going to need Dave's help with this!!!
 df_lat <- read_excel("data/latrine_distributions_29-7-2014.xlsx", sheet = "original")
-str(df_lat)
+df_lat <- df_lat[-9, ] # remove blank row
+
+df_latT <- setNames(as.data.frame(t(df_lat[-1])), df_lat[[1]]) |> tibble::rownames_to_column(var = "site.name")
+head(df_latT)
+str(df_latT)
+
+
+
 
 ## camera functioning ----
 ### gives camera and dates deployed with number days out and days captured which I think is how many days of data.  NA means a "camera not set up" but in some cases, its blank.  Card filled seems to happen when days_capture << days_out.  But camera malfuction can also cause this problem - see Cote about this.
