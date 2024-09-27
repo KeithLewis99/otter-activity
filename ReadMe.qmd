@@ -8,11 +8,27 @@ editor: visual
 
 A converstation with Dave Cote led to him telling me about some unfinished otter work that he had been involved with. He sent me with "otter analysis notes" and "Otter camera paper" on 2024-08-20. On 2024-09-23, he sent me some data sets. I set up a github account and a Rproject. The original data sets are in the ../CAFE/projects/otterTNNP/original_data while the data files to be modified for analysis Rproject is in ../otterTNNP/otter-activity/data. The only modifications are changing the variable names and making .csv files
 
+# Todo
+
+-   fix doy in camera activity
+
+-   get metadata
+
+-   read thesis and see what was done - i'm sure I can do more and better although these days, maybe not
+
+-   make months into dates, not characters
+
+-   fix variable types in latrine data as they are all character - make sure they don't change
+
 ## Data
 
 ### metadata
 
 Need some metadata for this
+
+#### latrine_distributions
+
+Talked to Cote. He said that this file was so that the latrine sites could be compared to random sites generated in GIS (Yolanda Wiersma was involved). Worksheets are divided into "all_sites", "depth sites", and original. I have added sheet 1 which was just to compare the data sets and a metadata page. The "original" is all the data, i.e., from TNNP and Alexander Bay containing latrine sites but also random sites but also sites that have the forage-area data which are not in the "all sites". I checked this on sheet 1 to confirm. Conclusion: work with "original"
 
 ### data clean up
 
