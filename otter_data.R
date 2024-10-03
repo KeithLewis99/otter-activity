@@ -85,9 +85,11 @@ plot(density(df_act$numberofOtter))
 
 
 ## latrine distributions ----
-# going to need Dave's help with this!!!
+### See ReadMe for explanation - had to pivot from wide to long
+### see Lawrence thesis, Table 2.1 for metadata
 df_lat <- read_excel("data/latrine_distributions_29-7-2014.xlsx", sheet = "original")
 df_lat <- df_lat[-9, ] # remove blank row
+
 
 df_latT <- setNames(as.data.frame(t(df_lat[-1])), df_lat[[1]]) |> tibble::rownames_to_column(var = "site.name")
 head(df_latT)
