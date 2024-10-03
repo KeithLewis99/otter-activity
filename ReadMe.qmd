@@ -43,6 +43,30 @@ Warning messages:
 3: Expecting date in N13500 / R13500C14: got '16:37:00 PM' 
 ```
 
+## Lawrence Thesis
+
+What can we lift up; what new?
+
+### Chatper 2 - Latrine site characteristics and patterns of activity
+
+-   Landscape: A number of landscape variables (see Table 2.1) - forage area is not clearly defined;
+
+    -   but its analysed with t-tests on log transformed data (assume ln but its not clear) to determine differences between latrine and random sites??? Suggest doing logistic regression on normalized/centered variables but need to know how to back-transform them
+
+-   Latrine activity/preference
+
+    -   autocorrelation not testsed for
+
+    -   used stepwise regression - really, results wouldn't change if you just did regular regression
+
+### Chapter 3:
+
+-   used mixed-effects models
+
+### Chapter 4: activity/groupsize \~ landscape type
+
+Landscape type is a factor variable (used:Glovertown v unsued:NewmanSound)
+
 ## Analyses
 
 You can add options to executable code like this
