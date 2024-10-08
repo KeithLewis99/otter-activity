@@ -51,13 +51,19 @@ What can we lift up; what new?
 
 -   Landscape: A number of landscape variables (see Table 2.1) - forage area is not clearly defined;
 
-    -   but its analysed with t-tests on log transformed data (assume ln but its not clear) to determine differences between latrine and random sites??? Suggest doing logistic regression on normalized/centered variables but need to know how to back-transform them
+    -   but its analysed with t-tests on log transformed data (assume ln but its not clear) to determine differences between latrine and random sites??? Suggest doing logistic regression on scaled/normalized/centered variables but need to know how to back-transform them
 
 -   Latrine activity/preference
 
-    -   autocorrelation not testsed for
+    -   autocorrelation not tested for
 
     -   used stepwise regression - really, results wouldn't change if you just did regular regression
+
+        #### Thoughts: lift up/new
+
+For landscape: suggest doing logistic regression on scaled/normalized/centered variables but need to know how to back-transform them
+
+For latrine activity:
 
 ### Chapter 3:
 
