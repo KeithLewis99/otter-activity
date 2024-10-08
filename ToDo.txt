@@ -1,0 +1,8 @@
+
+
+get the variables in the right type for df_latT and then do a logistic regression
+glm(y~ x, data = df_latT, dist = bernouli, link = logit)
+
+
+Review: https://stats.stackexchange.com/questions/144121/logistic-regression-bernoulli-vs-binomial-response-variables
+This is the difference between binomial and Bernoulli
