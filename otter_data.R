@@ -90,12 +90,33 @@ plot(density(df_act$numberofOtter))
 df_lat <- read_excel("data/latrine_distributions_29-7-2014.xlsx", sheet = "original")
 df_lat <- df_lat[-9, ] # remove blank row
 
-
+# change from wide to long format
 df_latT <- setNames(as.data.frame(t(df_lat[-1])), df_lat[[1]]) |> tibble::rownames_to_column(var = "site.name")
 head(df_latT)
 str(df_latT)
 
+# change data types
+unique(df_latT$site.name)
+unique(df_latT$latrine.present)
+unique(df_latT$site.location)
+plot(density(as.numeric(df_latT$droad)))
 
+
+library(dplyr)
+df_latT <- df_latT %>%
+  mutate_at(c("droad", "dcabin", "treeheight", "dlogging", "dstreammouth", "dfreshwater", "dforagearea"), as.numeric) 
+
+df_latT$site.location <- as.factor(df_latT$site.location)
+
+df_latT <- df_latT |>
+  mutate(lat.pres = if_else(latrine.present == "Y", 1, 0))
+str(df_latT)
+View(df_latT)
+
+m1 <- glm(lat.pres ~ droad + site.location, 
+          family = binomial(link = "logit"),
+          data = df_latT)
+summary(m1)
 
 
 ## camera functioning ----
@@ -106,7 +127,18 @@ str(df_latT)
 # do we need to extract date or is this in df_act?
 df_cam <- read_excel("data/Camera_functioning.xlsx")
 str(df_cam)
-View(df_cam)
+#View(df_cam)
 unique(df_cam$year)
 df_cam$days_out <- as.numeric(df_cam$days_out)
 summary(df_cam$days_out)
+
+
+
+
+# set up some binary data
+Pres <- c(rep(1, 40), rep(0, 40))
+rnor <- function(x) rnorm(1, mean = ifelse(x == 1, 12.5, 7.5), sd = 2)
+ExpVar <- sapply(Pres, rnor)
+
+# linear model with binary data...
+lm(Pres ~ ExpVar)
