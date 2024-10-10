@@ -1,8 +1,12 @@
 ToDO
-create an analysis file for the logistic regressions
 think about what you want to do here.
-Diagnostics for log regression https://sscc.wisc.edu/sscc/pubs/RegDiag-R/logistic-regression.html#log_lin
 
+Diagnostics for log regression https://sscc.wisc.edu/sscc/pubs/RegDiag-R/logistic-regression.html#log_lin
+	- need lat/long
+	- spent most of the day on this - I think that its just best to use DHARMA but also need to check colinearity, outliers, and VIF
+	- DHARMA seems the way to go.  A bit sad that there hasn't been much progress on this in 205 years.
+	- dot plots - do for all data
+	- see Zuur for EDA guide
 
 Review: https://stats.stackexchange.com/questions/144121/logistic-regression-bernoulli-vs-binomial-response-variables
 This is the difference between binomial and Bernoulli
@@ -10,3 +14,4 @@ This is the difference between binomial and Bernoulli
 Done:
 get the variables in the right type for df_latT and then do a logistic regression
 glm(y~ x, data = df_latT, dist = bernouli, link = logit)
+create an analysis file for the logistic regressions
