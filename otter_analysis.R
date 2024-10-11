@@ -7,7 +7,7 @@ library(car)
 
 # Latrine Presence ----
 ## EDA ----
-# outliers x and y
+# 1. outliers x and y
 ggplot(df_latT, aes(site.location, droad)) + 
   geom_violin() + 
   facet_grid(~latrine.present)
@@ -24,11 +24,21 @@ df_latPlot |>
 # Cleavland dot plots
 ggplot(df_latT, aes(droad, y = seq(1, length(droad),1), fill = site.location, colour = site.location)) + geom_point() + facet_grid(~latrine.present)
 
+ggplot(df_latT, aes(dcabin, y = seq(1, length(droad),1), fill = site.location, colour = site.location)) + geom_point() + facet_grid(~latrine.present)
 
-# zero trouble y
-plot(density)
+ggplot(df_latT, aes(dlogging, y = seq(1, length(droad),1), fill = site.location, colour = site.location)) + geom_point() + facet_grid(~latrine.present)
 
-# collinearity x/relationshiop y/x
+ggplot(df_latT, aes(dstreammouth, y = seq(1, length(droad),1), fill = site.location, colour = site.location)) + geom_point() + facet_grid(~latrine.present)
+
+ggplot(df_latT, aes(dfreshwater, y = seq(1, length(droad),1), fill = site.location, colour = site.location)) + geom_point() + facet_grid(~latrine.present)
+
+ggplot(df_latT, aes(dforagearea, y = seq(1, length(droad),1), fill = site.location, colour = site.location)) + geom_point() + facet_grid(~latrine.present)
+
+
+# 4. zero trouble y
+table(df_latT$lat.pres, df_latT$site.location)
+
+# 5/6. collinearity x/relationshiop y/x
 Scatter_Matrix <- ggpairs(df_latT,columns = c(2:7, 9), 
                           title = "Scatter Plot Matrix for latrine Dataset", 
                           axisLabels = "show") 
@@ -36,7 +46,17 @@ ggsave("figs/Scatter plot matrix.png", Scatter_Matrix, width = 7,
        height = 7, units = "in") 
 Scatter_Matrix
 
-# interactions
+# 7.interactions (coplots)
+# not sure quite how to do this yet
+coplot(dlogging ~ droad |lat.pres*site.location, data = df_latT)
+library(ggeffects)
+ggpredict(m1, c(lat.pres, site.location)) |> plot()
+
+ggplot(df_latT, aes(droad, as.numeric(lat.pres), color=site.location)) +
+  stat_smooth(method="glm", formula=y~x,
+              alpha=0.2, size=2, aes(fill=site.location)) +
+  geom_point(position=position_jitter(height=0.03, width=0)) +
+  xlab("Dist to Road") + ylab("Pr (survived)")
 
 ## Confirmatory ----
 m1 <- glm(lat.pres ~ droad + site.location + dlogging, 
@@ -92,20 +112,14 @@ residuals(m1, type = "working")
 
 
 #https://cran.r-project.org/web/packages/regressinator/vignettes/logistic-regression-diagnostics.html
-# multicollinearity
-
-
-
+# 5 (again) multicollinearity
 
 vif(m1)
 
 
-# outliers
-
-
-
 #DHARMA
 ## https://cran.r-project.org/web/packages/DHARMa/vignettes/DHARMa.html
+## 2, 3, 8
 
 ## diagnostics ----
 library(DHARMa)
