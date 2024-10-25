@@ -4,9 +4,21 @@ think about what you want to do here.
 Diagnostics for log regression https://sscc.wisc.edu/sscc/pubs/RegDiag-R/logistic-regression.html#log_lin
 	- need lat/long
 	- spent most of the day on this - I think that its just best to use DHARMA but also need to check colinearity, outliers, and VIF
-	- DHARMA seems the way to go.  A bit sad that there hasn't been much progress on this in 205 years.
+	- DHARMA seems the way to go.  A bit sad that there hasn't been much progress on this in 25 years.
 	- dot plots - do for all data
 	- see Zuur for EDA guide
+
+get lat/long data that Cote sent
+fix doy in camera activity
+
+get metadata
+
+read thesis and see what was done - i'm sure I can do more and better although these days, maybe not
+
+make months into dates, not characters
+
+fix variable types in latrine data as they are all character - make sure they don't change
+
 
 Review: https://stats.stackexchange.com/questions/144121/logistic-regression-bernoulli-vs-binomial-response-variables
 This is the difference between binomial and Bernoulli
