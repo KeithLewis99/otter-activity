@@ -111,10 +111,12 @@ df_latT$site.location <- as.factor(df_latT$site.location)
 df_latT <- df_latT |>
   mutate(lat.pres = if_else(latrine.present == "Y", 1, 0))
 str(df_latT)
-View(df_latT)
+#View(df_latT)
+write.csv(df_latT, "data_derived/latrine_landscape.csv")
 
 # make data for plotting violin plots
-df_latPlot <- pivot_longer(df_latT[c(2:3, 5:7, 9:11)], cols = c(1:6))
+## but eliminate dlogging because all values for TN are 0
+df_latPlot <- pivot_longer(df_latT[c(2:3, 6:7, 9:11)], cols = c(1:5))
 str(df_latPlot)
 head(df_latPlot)
 df_latPlot$latrine.present <- factor(df_latPlot$latrine.present)
