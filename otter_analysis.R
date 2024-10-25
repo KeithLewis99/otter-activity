@@ -4,22 +4,72 @@ source("otter_data.R")
 library(ggplot2) 
 library(GGally) 
 library(car)
+library(dplyr)
 
 # Latrine Presence ----
 ## EDA ----
-# 1. outliers x and y
+### 1. outliers x and y ----
+## a few outliers at high end for all EVs but nothing terribly note worthy or of concern given the data set involved - perhaps dcabin and dstreammouth
+# contingency tables
+df_latT |>
+  group_by(site.location, latrine.present) |>
+  summarise(count = n())
+
+df_latPlot |>
+  group_by(site.location, latrine.present) |>
+  summarise(count = n())
+
+# not really outliers, just getting a feel for the data
+table(df_latT$site.location, df_latT$latrine.present, df_latT$treeheight)
+ggplot(df_latT, aes(x = treeheight)) + geom_bar() + facet_grid(site.location ~ latrine.present)
+
+## much overlap but cabins are often kilometers away in TN
+## no real difference between Y and N
+ggplot(df_latT, aes(site.location, dcabin)) + 
+  geom_violin() + 
+  facet_grid(~latrine.present)
+
+# values not available for AB - so we can make comparisons for TNNP only
+# forage area probably a bit bigger for Y
+ggplot(df_latT, aes(site.location, dforagearea)) + 
+  geom_violin() + 
+  facet_grid(~latrine.present)
+
+# about the same for all
+ggplot(df_latT, aes(site.location, dfreshwater)) + 
+  geom_violin() + 
+  facet_grid(~latrine.present)
+
+# ignore this as there dlogging values for TN are all 0
+ggplot(df_latT, aes(site.location, dlogging)) + 
+geom_violin() + 
+  facet_grid(~latrine.present)
+
+# Distance at least 1 km greater in general for TN but a few values very close for Y
 ggplot(df_latT, aes(site.location, droad)) + 
   geom_violin() + 
   facet_grid(~latrine.present)
 
+# about the same
+ggplot(df_latT, aes(site.location, dstreammouth)) + 
+  geom_violin() + 
+  facet_grid(~latrine.present)
+
+
 
 ggplot(df_latPlot, aes(name, value, fill = name)) + geom_violin() + facet_grid(site.location ~ latrine.present)
+
+# plot all togehter
+ggplot(df_latPlot |> filter(site.location == "Terra Nova"), aes(name, value, fill = name)) + geom_violin() + facet_grid(. ~ latrine.present)
+
+ggplot(df_latPlot |> filter(site.location == "Alexander Bay"), aes(name, value, fill = name)) + geom_violin() + facet_grid(. ~ latrine.present)
 
 ggplot(df_latPlot, aes(name, value, fill = name)) + geom_boxplot() + facet_grid(site.location ~ latrine.present)
 
 df_latPlot |>
   filter(site.location == "Terra Nova") |>
   ggplot(aes(name, value, fill = name)) + geom_violin() + facet_grid(~ latrine.present)
+
 
 # Cleavland dot plots
 ggplot(df_latT, aes(droad, y = seq(1, length(droad),1), fill = site.location, colour = site.location)) + geom_point() + facet_grid(~latrine.present)
@@ -32,13 +82,22 @@ ggplot(df_latT, aes(dstreammouth, y = seq(1, length(droad),1), fill = site.locat
 
 ggplot(df_latT, aes(dfreshwater, y = seq(1, length(droad),1), fill = site.location, colour = site.location)) + geom_point() + facet_grid(~latrine.present)
 
+# again, no data for AB so comparisons are for TNNP only
 ggplot(df_latT, aes(dforagearea, y = seq(1, length(droad),1), fill = site.location, colour = site.location)) + geom_point() + facet_grid(~latrine.present)
 
 
-# 4. zero trouble y
+### 4. zero trouble y ----
 table(df_latT$lat.pres, df_latT$site.location)
+length(df_latT$droad[df_latT$droad < 10])
+length(df_latT$droad[df_latT$dcabin < 10])
+length(df_latT$droad[df_latT$dstreammouth < 10])
+# not valid to compare dforage area bc no values for AB
 
-# 5/6. collinearity x/relationshiop y/x
+length(df_latT$droad[df_latT$dlogging < 10])
+plot(density(df_latT$dlogging))
+
+
+### 5/6. collinearity x/relationshiop y/x ----
 Scatter_Matrix <- ggpairs(df_latT,columns = c(2:7, 9), 
                           title = "Scatter Plot Matrix for latrine Dataset", 
                           axisLabels = "show") 
@@ -46,11 +105,13 @@ ggsave("figs/Scatter plot matrix.png", Scatter_Matrix, width = 7,
        height = 7, units = "in") 
 Scatter_Matrix
 
-# 7.interactions (coplots)
+# Correlations where r > 0.5 for droad:dcabin, dstreammouth:dfreshwater 
+## Correlations where r > 0.3 but r < 0.5 for dlogging:droad  and dlogging:dcabin (but probably won't use logging)
+## and rest are generally pretty low
+
+# 7.interactions (coplots)----
 # not sure quite how to do this yet
-coplot(dlogging ~ droad |lat.pres*site.location, data = df_latT)
-library(ggeffects)
-ggpredict(m1, c(lat.pres, site.location)) |> plot()
+coplot(droad ~ droad |lat.pres*site.location, data = df_latT)
 
 ggplot(df_latT, aes(droad, as.numeric(lat.pres), color=site.location)) +
   stat_smooth(method="glm", formula=y~x,
@@ -68,6 +129,9 @@ fitted(m1)
 predict(m1)
 residuals(m1)
 residuals(m1, type = "working")
+
+library(ggeffects)
+ggpredict(m1, c(lat.pres, site.location)) |> plot()
 
 # # # this is pretty useless as it always has been 
 # par(mfrow=c(2,2))
@@ -122,6 +186,8 @@ vif(m1)
 ## 2, 3, 8
 
 ## diagnostics ----
+# 2 & 3 ----
+## resids normal, homogeneous variance
 library(DHARMa)
 # homogeneity/normality/linearity
 m1_simres <- simulateResiduals(m1)
@@ -129,7 +195,7 @@ m1_simres <- simulateResiduals(m1)
 plot(m1_simres)
 # The normality is great; homogeneity OK
 
-# independence
+# 8 independence ----
 ### temporal independence
 # No temporal independence as these are just use/non-use sites
 
