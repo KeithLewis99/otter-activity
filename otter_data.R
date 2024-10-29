@@ -30,7 +30,7 @@ if(!dir.exists("refs"))dir.create("refs") #for rmd report
 library(readxl)
 library(lubridate)
 library(magrittr)
-# library(dplyr)
+library(dplyr)
 library(tidyr)
 # library(ggplot2)
 # library(plotly)
@@ -100,9 +100,9 @@ unique(df_latT$site.name)
 unique(df_latT$latrine.present)
 unique(df_latT$site.location)
 plot(density(as.numeric(df_latT$droad)))
+df_latT <- rename(df_latT, 
+                  site.name.original = site.name.origional)
 
-
-library(dplyr)
 df_latT <- df_latT %>%
   mutate_at(c("droad", "dcabin", "treeheight", "dlogging", "dstreammouth", "dfreshwater", "dforagearea"), as.numeric) 
 
@@ -140,7 +140,60 @@ summary(df_cam$days_out)
 
 
 
+# Lat-long ----
+## TN-random ----
+df_way_tnr <- read.csv("../original_Data/Slide Locations/park_random_sites.csv")
+str(df_way_tnr)
 
+
+length(df_way_tnr$name)
+nrow(df_latT |> filter(site.location == "Terra Nova" & latrine.present == "N"))
+
+df_latT[duplicated(df_latT$site.name) == "TRUE",]
+df_way_tnr[duplicated(df_way_tnr$name) == "TRUE",]
+df_way_tnr[df_way_tnr$name == "TNR26" | df_way_tnr$name == "TNR153", ]
+
+
+# after looking at Google EArth, I suspect that the first TNR26 in df_way_tnr, i.e,. the western most is the right one and the second one (eastern most) is actually TNR27 as there is none in the kmz file but is in the spreadsheet.  I suspect that TNR153 is a duplicate iwth the second in teh spreadsheet (western most) being the right one as it is about equidistant from TNR152 and TNR 153 while the first TNR153 (eastern most) is very near TNR152.  All Lat longs match for these points.  So, rename the second TNR26 and eliminate TNR146.
+
+df_way_tnr$name[35] <- "TNR27"
+df_way_tnr <- df_way_tnr[-c(146),]
+str(df_way_tnr)
+
+
+df_latT <- left_join(df_latT, df_way_tnr, by= c("site.name" = "name"))
+str(df_latT)
+
+
+## AB-random ----
+df_way_ab <- read.csv("../original_Data/Slide Locations/AB_random_sites.csv")
+str(df_way_ab)
+str(df_latT)
+
+length(df_way_ab$name)
+nrow(df_latT |> filter(site.location == "Alexander Bay" & latrine.present == "N"))
+
+# same length but SSR8 duplicated - no way to tell difference so eliminate
+df_way_ab[duplicated(df_way_ab$name) == "TRUE",]
+df_latT[df_latT$site.name.original == "SSR8", ]
+df_way_ab[df_way_ab$name == "SSR8", ]
+
+df_way_tnr <- df_way_tnr[-c(8,9),]
+
+# df_latT has an SSR59 - unless everything has been misnumbered
+anti_join(df_latT |> filter(site.location == "Alexander Bay" & latrine.present == "N"), df_way_ab, by = c("site.name.original" = "name"))
+df_latT[df_latT$site.name.original == "SSR59",]
+df_latT <- df_latT[-509,]
+
+
+df_latT <- left_join(df_latT, df_way_ab, by= c("site.name.original" = "name"))
+
+
+
+
+
+
+# END ----
 # set up some binary data
 Pres <- c(rep(1, 40), rep(0, 40))
 rnor <- function(x) rnorm(1, mean = ifelse(x == 1, 12.5, 7.5), sd = 2)
@@ -148,3 +201,4 @@ ExpVar <- sapply(Pres, rnor)
 
 # linear model with binary data...
 lm(Pres ~ ExpVar)
+
