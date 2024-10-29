@@ -111,13 +111,13 @@ Scatter_Matrix
 
 # 7.interactions (coplots)----
 # not sure quite how to do this yet
-coplot(droad ~ droad |lat.pres*site.location, data = df_latT)
+coplot(droad ~ dcabin |lat.pres*site.location, data = df_latT)
 
 ggplot(df_latT, aes(droad, as.numeric(lat.pres), color=site.location)) +
   stat_smooth(method="glm", formula=y~x,
               alpha=0.2, size=2, aes(fill=site.location)) +
   geom_point(position=position_jitter(height=0.03, width=0)) +
-  xlab("Dist to Road") + ylab("Pr (survived)")
+  xlab("Dist to Road") + ylab("Pr (latrine)")
 
 ## Confirmatory ----
 m1 <- glm(lat.pres ~ droad + site.location + dlogging, 
@@ -131,7 +131,13 @@ residuals(m1)
 residuals(m1, type = "working")
 
 library(ggeffects)
-ggpredict(m1, c(lat.pres, site.location)) |> plot()
+
+ggpredict(m1)
+ggpredict(m1) |> plot()
+ggpredict(m1, terms = "droad") |> plot()
+ggpredict(m1, terms = "dlogging") |> plot()
+ggpredict(m1, terms = "site.location") |> plot()
+ggpredict(m1, terms = c("site.location", "droad")) |> plot()
 
 # # # this is pretty useless as it always has been 
 # par(mfrow=c(2,2))
