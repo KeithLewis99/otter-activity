@@ -1,6 +1,8 @@
 ---
 title: "ReadMe"
-format: html
+format: 
+  html:
+    toc: true
 editor: visual
 ---
 
