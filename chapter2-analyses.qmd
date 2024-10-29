@@ -1,0 +1,101 @@
+---
+title: "Chapter2-analyses"
+format: 
+  html:
+    toc: true
+execute: 
+  echo: false
+editor: visual
+---
+
+```{r}
+#| echo: false
+#| output: false
+source("otter_data.R")
+library(ggplot2) 
+library(GGally) 
+library(car)
+library(dplyr)
+library(DHARMa)
+library(ggeffects)
+
+df_latT |>
+  group_by(site.location, latrine.present) |>
+  summarise(count = n())
+
+df_latPlot |>
+  group_by(site.location, latrine.present) |>
+  summarise(count = n())
+
+```
+
+# Exploratory Data Analysis
+
+::: panel-tabset
+## outliers
+
+```{r}
+ggplot(df_latPlot, aes(name, value, fill = name)) + geom_boxplot() + facet_grid(site.location ~ latrine.present)
+```
+
+## zeros
+
+```{r}
+table(df_latT$lat.pres, df_latT$site.location)
+
+```
+
+## collinearity/relationship
+
+```{r}
+#| warning: false
+Scatter_Matrix <- ggpairs(df_latT,columns = c(2:7, 9), title = "Scatter Plot Matrix for latrine Dataset", axisLabels = "show")
+Scatter_Matrix
+```
+
+:::
+:::
+
+# Analysis
+
+.panel-tabet
+
+## Data
+
+```{r}
+str(df_latT)
+```
+
+## Summary
+
+```{r}
+m1 <- glm(lat.pres ~ droad + site.location + dlogging, 
+          family = binomial(link = "logit"),
+          data = df_latT)
+summary(m1)
+coef(m1)
+
+```
+
+## Predictions
+
+ggpredict(m1, terms = "droad") \|\> plot() ggpredict(m1, terms = "dlogging") \|\> plot() ggpredict(m1, terms = "site.location") \|\> plot() ggpredict(m1, terms = c("site.location", "droad")) \|\> plot()
+
+```{r}
+ggpredict(m1, terms = "droad") |> plot()
+ggpredict(m1, terms = "dlogging") |> plot()
+ggpredict(m1, terms = "site.location") |> plot()
+ggpredict(m1, terms = c("site.location", "droad")) |> plot()
+
+```
+
+## Homogeneity-normality
+
+```{r}
+m1_simres <- simulateResiduals(m1)
+# str(bt_den.glmm1_simres,1)
+plot(m1_simres)
+
+```
+
+## Independence
