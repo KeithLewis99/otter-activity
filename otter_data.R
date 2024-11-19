@@ -102,6 +102,8 @@ unique(df_latT$site.location)
 plot(density(as.numeric(df_latT$droad)))
 df_latT <- rename(df_latT, 
                   site.name.original = site.name.origional)
+df_latT$dforagearea[df_latT$dforagearea == "N/A"] <- "NA"
+df_latT$dforagearea <- as.numeric(df_latT$dforagearea)
 
 df_latT <- df_latT %>%
   mutate_at(c("droad", "dcabin", "treeheight", "dlogging", "dstreammouth", "dfreshwater", "dforagearea"), as.numeric) 
@@ -181,6 +183,7 @@ df_way_ab[df_way_ab$name == "SSR8", ]
 df_way_tnr <- df_way_tnr[-c(8,9),]
 
 # df_latT has an SSR59 - unless everything has been misnumbered
+# delete this point
 anti_join(df_latT |> filter(site.location == "Alexander Bay" & latrine.present == "N"), df_way_ab, by = c("site.name.original" = "name"))
 df_latT[df_latT$site.name.original == "SSR59",]
 df_latT <- df_latT[-509,]
@@ -195,10 +198,10 @@ df_latT <- left_join(df_latT, df_way_ab, by= c("site.name.original" = "name"))
 
 # END ----
 # set up some binary data
-Pres <- c(rep(1, 40), rep(0, 40))
-rnor <- function(x) rnorm(1, mean = ifelse(x == 1, 12.5, 7.5), sd = 2)
-ExpVar <- sapply(Pres, rnor)
-
-# linear model with binary data...
-lm(Pres ~ ExpVar)
-
+# Pres <- c(rep(1, 40), rep(0, 40))
+# rnor <- function(x) rnorm(1, mean = ifelse(x == 1, 12.5, 7.5), sd = 2)
+# ExpVar <- sapply(Pres, rnor)
+# 
+# # linear model with binary data...
+# lm(Pres ~ ExpVar)
+# 
