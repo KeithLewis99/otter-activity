@@ -109,9 +109,12 @@ Scatter_Matrix
 ## Correlations where r > 0.3 but r < 0.5 for dlogging:droad  and dlogging:dcabin (but probably won't use logging)
 ## and rest are generally pretty low
 
-# 7.interactions (coplots)----
+### 7.interactions (coplots)----
 # not sure quite how to do this yet
 coplot(droad ~ dcabin |lat.pres*site.location, data = df_latT)
+coplot(droad ~ dlogging |lat.pres*site.location, data = df_latT)
+coplot(droad ~ dstreammouth |lat.pres*site.location, data = df_latT)
+
 
 ggplot(df_latT, aes(droad, as.numeric(lat.pres), color=site.location)) +
   stat_smooth(method="glm", formula=y~x,
@@ -119,10 +122,63 @@ ggplot(df_latT, aes(droad, as.numeric(lat.pres), color=site.location)) +
   geom_point(position=position_jitter(height=0.03, width=0)) +
   xlab("Dist to Road") + ylab("Pr (latrine)")
 
-## Confirmatory ----
+
+# Model ----
 m1 <- glm(lat.pres ~ droad + site.location + dlogging, 
           family = binomial(link = "logit"),
           data = df_latT)
+
+
+#DHARMA
+## https://cran.r-project.org/web/packages/DHARMa/vignettes/DHARMa.html
+## 2, 3, 8
+
+## diagnostics ----
+### 2 & 3 ----
+## resids normal, homogeneous variance
+library(DHARMa)
+# homogeneity/normality/linearity
+m1_simres <- simulateResiduals(m1)
+# str(bt_den.glmm1_simres,1)
+plot(m1_simres)
+# The normality is great; homogeneity OK
+
+### 8 independence ----
+### temporal independence
+# No temporal independence as these are just use/non-use sites
+
+### spatial independence
+# join coordinates with data set - may not be required
+#bt.np <- left_join(bt.np, coords, by = c("Station_new" = "Station"))
+#str(bt.np)
+#bt.np[,c(2, 4, 6, 7, 11:13, 17, 21, 22)]
+
+# just coords for non-pool
+# coords.np <- as.data.frame(coords[c(1:4, 7:8, 10, 12:13, 15:18) ,]) 
+# nrow(coords.np)
+
+# recalculate resids with stations as the grouping variable
+bt_den.glmm1_simres_recalcSpace <- recalculateResiduals(bt_den.glmm1_simres, group = as.factor(bt.np$Station_new))
+unique(bt.np$Station_new) # OK - there are only 13 values in this because this is no pools and there are 4 pools + 1 destroyed pool so 18-5=13.
+#str(bt_den.glmm1_simres_recalcSpace)
+
+testSpatialAutocorrelation(bt_den.glmm1_simres_recalcSpace, x = unique(bt.np$X), y = unique(bt.np$Y))
+
+spatialAutoCorrBase_fun(bt.np, bt_den.glmm1_simres_recalcSpace)  
+bt.np.density.all <- spatialData_join(bt.np.density.station[-4,], bt_den.glmm1_simres_recalcSpace, coords.np)
+
+spatialAutoCorrGG_fun(bt.np.density.all)
+
+
+### vif ----
+#https://cran.r-project.org/web/packages/regressinator/vignettes/logistic-regression-diagnostics.html
+# 5 (again) multicollinearity
+
+vif(m1)
+
+
+
+# Model Summary ----
 summary(m1)
 coef(m1)
 fitted(m1)
@@ -181,49 +237,6 @@ ggpredict(m1, terms = c("site.location", "droad")) |> plot()
 
 
 
-#https://cran.r-project.org/web/packages/regressinator/vignettes/logistic-regression-diagnostics.html
-# 5 (again) multicollinearity
-
-vif(m1)
 
 
-#DHARMA
-## https://cran.r-project.org/web/packages/DHARMa/vignettes/DHARMa.html
-## 2, 3, 8
-
-## diagnostics ----
-# 2 & 3 ----
-## resids normal, homogeneous variance
-library(DHARMa)
-# homogeneity/normality/linearity
-m1_simres <- simulateResiduals(m1)
-# str(bt_den.glmm1_simres,1)
-plot(m1_simres)
-# The normality is great; homogeneity OK
-
-# 8 independence ----
-### temporal independence
-# No temporal independence as these are just use/non-use sites
-
-### spatial independence
-# join coordinates with data set - may not be required
-#bt.np <- left_join(bt.np, coords, by = c("Station_new" = "Station"))
-#str(bt.np)
-#bt.np[,c(2, 4, 6, 7, 11:13, 17, 21, 22)]
-
-# just coords for non-pool
-# coords.np <- as.data.frame(coords[c(1:4, 7:8, 10, 12:13, 15:18) ,]) 
-# nrow(coords.np)
-
-# recalculate resids with stations as the grouping variable
-bt_den.glmm1_simres_recalcSpace <- recalculateResiduals(bt_den.glmm1_simres, group = as.factor(bt.np$Station_new))
-unique(bt.np$Station_new) # OK - there are only 13 values in this because this is no pools and there are 4 pools + 1 destroyed pool so 18-5=13.
-#str(bt_den.glmm1_simres_recalcSpace)
-
-testSpatialAutocorrelation(bt_den.glmm1_simres_recalcSpace, x = unique(bt.np$X), y = unique(bt.np$Y))
-
-spatialAutoCorrBase_fun(bt.np, bt_den.glmm1_simres_recalcSpace)  
-bt.np.density.all <- spatialData_join(bt.np.density.station[-4,], bt_den.glmm1_simres_recalcSpace, coords.np)
-
-spatialAutoCorrGG_fun(bt.np.density.all)
-
+# END ----
