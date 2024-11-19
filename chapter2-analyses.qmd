@@ -29,73 +29,186 @@ df_latPlot |>
 
 ```
 
-# Exploratory Data Analysis
-
-::: panel-tabset
-## outliers
-
-```{r}
-ggplot(df_latPlot, aes(name, value, fill = name)) + geom_boxplot() + facet_grid(site.location ~ latrine.present)
-```
-
-## zeros
-
-```{r}
-table(df_latT$lat.pres, df_latT$site.location)
-
-```
-
-## collinearity/relationship
-
-```{r}
-#| warning: false
-Scatter_Matrix <- ggpairs(df_latT,columns = c(2:7, 9), title = "Scatter Plot Matrix for latrine Dataset", axisLabels = "show")
-Scatter_Matrix
-```
-
-:::
-:::
-
-# Analysis
-
-.panel-tabet
-
-## Data
+# Data
 
 ```{r}
 str(df_latT)
 ```
 
-## Summary
+# Exploratory Data Analysis
+
+## Outliers - box/violin plots
+
+::: panel-tabset
+### All
+
+```{r}
+ggplot(df_latPlot, aes(name, value, fill = name)) + geom_boxplot() + facet_grid(site.location ~ latrine.present)
+```
+
+### Forage Area
+
+```{r}
+ggplot(df_latT, aes(site.location, dforagearea)) + 
+  geom_violin() + 
+  facet_grid(~latrine.present)
+```
+
+### Freshwater
+
+```{r}
+ggplot(df_latT, aes(site.location, dfreshwater)) + 
+  geom_violin() + 
+  facet_grid(~latrine.present)
+```
+
+### Logging
+
+```{r}
+ggplot(df_latT, aes(site.location, dlogging)) + 
+geom_violin() + 
+  facet_grid(~latrine.present)
+```
+
+### Road
+
+```{r}
+ggplot(df_latT, aes(site.location, droad)) + 
+  geom_violin() + 
+  facet_grid(~latrine.present)
+```
+
+### Streammouth
+
+```{r}
+ggplot(df_latT, aes(site.location, dstreammouth)) + 
+  geom_violin() + 
+  facet_grid(~latrine.present)
+```
+:::
+
+## Outliers-Cleavland
+
+::: panel-tabset
+### Road
+
+```{r}
+ggplot(df_latT, aes(droad, y = seq(1, length(droad),1), fill = site.location, colour = site.location)) + geom_point() + ylab("ID") + facet_grid(~latrine.present)
+```
+
+### Cabin
+
+```{r}
+ggplot(df_latT, aes(dcabin, y = seq(1, length(droad),1), fill = site.location, colour = site.location)) + geom_point() + ylab("ID") + facet_grid(~latrine.present)
+```
+
+### Logging
+
+```{r}
+ggplot(df_latT, aes(dlogging, y = seq(1, length(droad),1), fill = site.location, colour = site.location)) + geom_point() + ylab("ID") + facet_grid(~latrine.present)
+```
+
+### Stream
+
+```{r}
+ggplot(df_latT, aes(dstreammouth, y = seq(1, length(droad),1), fill = site.location, colour = site.location)) + geom_point() + ylab("ID") + facet_grid(~latrine.present)
+```
+
+### Freshwater
+
+```{r}
+ggplot(df_latT, aes(dfreshwater, y = seq(1, length(droad),1), fill = site.location, colour = site.location)) + geom_point() + ylab("ID") + facet_grid(~latrine.present)
+```
+
+### Forage Area
+
+```{r}
+ggplot(df_latT, aes(dforagearea, y = seq(1, length(droad),1), fill = site.location, colour = site.location)) + geom_point() + ylab("ID") + facet_grid(~latrine.present)
+```
+:::
+
+::: panel-tabset
+### zeros
+
+```{r}
+table(df_latT$lat.pres, df_latT$site.location) 
+```
+
+### collinearity/relationship
+
+```{r}
+Scatter_Matrix <- ggpairs(df_latT,columns = c(2:7, 9), title = "Scatter Plot Matrix for latrine Dataset", axisLabels = "show") 
+Scatter_Matrix
+```
+:::
+
+## Interactions
+
+Not sure what to do with this yet
+
+# Analysis
 
 ```{r}
 m1 <- glm(lat.pres ~ droad + site.location + dlogging, 
           family = binomial(link = "logit"),
           data = df_latT)
-summary(m1)
-coef(m1)
-
 ```
 
-## Predictions
+## Diagnostics
 
-ggpredict(m1, terms = "droad") \|\> plot() ggpredict(m1, terms = "dlogging") \|\> plot() ggpredict(m1, terms = "site.location") \|\> plot() ggpredict(m1, terms = c("site.location", "droad")) \|\> plot()
-
-```{r}
-ggpredict(m1, terms = "droad") |> plot()
-ggpredict(m1, terms = "dlogging") |> plot()
-ggpredict(m1, terms = "site.location") |> plot()
-ggpredict(m1, terms = c("site.location", "droad")) |> plot()
-
-```
-
+::: panel-tabset
 ## Homogeneity-normality
 
 ```{r}
-m1_simres <- simulateResiduals(m1)
-# str(bt_den.glmm1_simres,1)
-plot(m1_simres)
-
+m1_simres <- simulateResiduals(m1) # str(bt_den.glmm1_simres,1) 
+plot(m1_simres) 
 ```
 
 ## Independence
+:::
+
+## 
+
+## Confirmatory Statistics
+
+::: panel.tabset
+## Summary
+
+```{r} summary(m1)}
+```
+
+## Coefficients
+
+```{r} coef(m1)}
+```
+:::
+
+## Predictions
+
+::: panel-tabset
+### Road
+
+```{r}
+ggpredict(m1, terms = "droad") |> plot()
+```
+
+### Logging
+
+```{r}
+ggpredict(m1, terms = "dlogging") |> plot()
+```
+
+### Site
+
+```{r}
+ggpredict(m1, terms = "site.location") |> plot()
+```
+
+### Interaction
+
+```{r}
+ggpredict(m1, terms = c("site.location", "droad")) |> plot()
+```
+:::
+
+## 
