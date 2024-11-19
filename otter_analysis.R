@@ -72,18 +72,18 @@ df_latPlot |>
 
 
 # Cleavland dot plots
-ggplot(df_latT, aes(droad, y = seq(1, length(droad),1), fill = site.location, colour = site.location)) + geom_point() + facet_grid(~latrine.present)
+ggplot(df_latT, aes(droad, y = seq(1, length(droad),1), fill = site.location, colour = site.location)) + geom_point() + ylab("ID") + facet_grid(~latrine.present)
 
-ggplot(df_latT, aes(dcabin, y = seq(1, length(droad),1), fill = site.location, colour = site.location)) + geom_point() + facet_grid(~latrine.present)
+ggplot(df_latT, aes(dcabin, y = seq(1, length(droad),1), fill = site.location, colour = site.location)) + geom_point() + ylab("ID") + facet_grid(~latrine.present)
 
-ggplot(df_latT, aes(dlogging, y = seq(1, length(droad),1), fill = site.location, colour = site.location)) + geom_point() + facet_grid(~latrine.present)
+ggplot(df_latT, aes(dlogging, y = seq(1, length(droad),1), fill = site.location, colour = site.location)) + geom_point() + ylab("ID") + facet_grid(~latrine.present)
 
-ggplot(df_latT, aes(dstreammouth, y = seq(1, length(droad),1), fill = site.location, colour = site.location)) + geom_point() + facet_grid(~latrine.present)
+ggplot(df_latT, aes(dstreammouth, y = seq(1, length(droad),1), fill = site.location, colour = site.location)) + geom_point() + ylab("ID") + facet_grid(~latrine.present)
 
-ggplot(df_latT, aes(dfreshwater, y = seq(1, length(droad),1), fill = site.location, colour = site.location)) + geom_point() + facet_grid(~latrine.present)
+ggplot(df_latT, aes(dfreshwater, y = seq(1, length(droad),1), fill = site.location, colour = site.location)) + geom_point() + ylab("ID") + facet_grid(~latrine.present)
 
 # again, no data for AB so comparisons are for TNNP only
-ggplot(df_latT, aes(dforagearea, y = seq(1, length(droad),1), fill = site.location, colour = site.location)) + geom_point() + facet_grid(~latrine.present)
+ggplot(df_latT, aes(dforagearea, y = seq(1, length(droad),1), fill = site.location, colour = site.location)) + geom_point() + ylab("ID") + facet_grid(~latrine.present)
 
 
 ### 4. zero trouble y ----
