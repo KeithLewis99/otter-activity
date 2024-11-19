@@ -3,6 +3,7 @@ title: "Chapter2-analyses"
 format: 
   html:
     toc: true
+    code-line-numbers: true
 execute: 
   echo: false
 editor: visual
@@ -31,9 +32,38 @@ df_latPlot |>
 
 # Data
 
+## Structure/Contingency
+
+::: panel-tabset
+### Structure
+
 ```{r}
 str(df_latT)
 ```
+
+### Contingency table
+
+```{r}
+df_latT |>
+  group_by(site.location, latrine.present) |>
+  summarise(count = n())
+```
+:::
+
+## Tree Height
+
+::: panel-tabset
+### Table
+
+```{r}
+table(df_latT$site.location, df_latT$latrine.present, df_latT$treeheight)
+```
+
+### graph
+```{r}
+
+```
+:::
 
 # Exploratory Data Analysis
 
@@ -46,18 +76,18 @@ str(df_latT)
 ggplot(df_latPlot, aes(name, value, fill = name)) + geom_boxplot() + facet_grid(site.location ~ latrine.present)
 ```
 
-### Forage Area
+### Road
 
 ```{r}
-ggplot(df_latT, aes(site.location, dforagearea)) + 
+ggplot(df_latT, aes(site.location, droad)) + 
   geom_violin() + 
   facet_grid(~latrine.present)
 ```
 
-### Freshwater
+### Cabin
 
 ```{r}
-ggplot(df_latT, aes(site.location, dfreshwater)) + 
+ggplot(df_latT, aes(site.location, dcabin)) + 
   geom_violin() + 
   facet_grid(~latrine.present)
 ```
@@ -70,18 +100,26 @@ geom_violin() +
   facet_grid(~latrine.present)
 ```
 
-### Road
+### Stream mouth
 
 ```{r}
-ggplot(df_latT, aes(site.location, droad)) + 
+ggplot(df_latT, aes(site.location, dstreammouth)) + 
   geom_violin() + 
   facet_grid(~latrine.present)
 ```
 
-### Streammouth
+### Freshwater
 
 ```{r}
-ggplot(df_latT, aes(site.location, dstreammouth)) + 
+ggplot(df_latT, aes(site.location, dfreshwater)) + 
+  geom_violin() + 
+  facet_grid(~latrine.present)
+```
+
+### Forage Area
+
+```{r}
+ggplot(df_latT, aes(site.location, dforagearea)) + 
   geom_violin() + 
   facet_grid(~latrine.present)
 ```
@@ -144,7 +182,101 @@ Scatter_Matrix
 
 ## Interactions
 
-Not sure what to do with this yet
+Coplots area a little tricky to read. The gray bars represent the coverage of the variable in relation to the row or column, i.e., the bars on the right are for the rows (read bottom to top) and the bars on top are for the columns (read left to right).
+
+::: panel-tabset
+### Road-cabin
+
+```{r}
+coplot(droad ~ dcabin |lat.pres*site.location, data = df_latT)
+```
+
+### Road-logging
+
+Is only relevant for Alexander Bay - no measurements for TN
+
+```{r}
+coplot(droad ~ dlogging |lat.pres*site.location, data = df_latT)
+```
+
+### Road-stream
+
+```{r}
+coplot(droad ~ dstreammouth |lat.pres*site.location, data = df_latT)
+```
+
+### Road-fresh
+
+```{r}
+coplot(droad ~ dfreshwater  |lat.pres*site.location, data = df_latT)
+```
+
+### Road-forage
+
+```{r}
+coplot(droad ~ dforagearea  |lat.pres*site.location, data = df_latT)
+```
+
+### Cabin-logging
+
+```{r}
+coplot(dcabin ~ dlogging |lat.pres*site.location, data = df_latT)
+```
+
+### Cabin-stream
+
+```{r}
+coplot(dcabin ~ dstreammouth |lat.pres*site.location, data = df_latT)
+```
+
+### Cabin-fresh
+
+```{r}
+coplot(dcabin ~ dfreshwater |lat.pres*site.location, data = df_latT)
+```
+
+### Cabin-forage
+
+```{r}
+coplot(dcabin ~ dforagearea |lat.pres*site.location, data = df_latT)
+```
+
+### Logging-stream
+
+```{r}
+coplot(dlogging ~ dstreammouth |lat.pres*site.location, data = df_latT)
+```
+
+### Logging-fresh
+
+```{r}
+coplot(dlogging ~ dfreshwater |lat.pres*site.location, data = df_latT)
+```
+
+### Logging-forage
+
+```{r}
+coplot(dlogging ~ dforagearea |lat.pres*site.location, data = df_latT)
+```
+
+### Stream-fresh
+
+```{r}
+coplot(dstreammouth ~ dfreshwater |lat.pres*site.location, data = df_latT)
+```
+
+### Stream-forage
+
+```{r}
+coplot(dstreammouth ~ dforagearea |lat.pres*site.location, data = df_latT)
+```
+
+### Fresh-forage
+
+```{r}
+coplot(dfreshwater ~ dforagearea |lat.pres*site.location, data = df_latT)
+```
+:::
 
 # Analysis
 
@@ -160,7 +292,8 @@ m1 <- glm(lat.pres ~ droad + site.location + dlogging,
 ## Homogeneity-normality
 
 ```{r}
-m1_simres <- simulateResiduals(m1) # str(bt_den.glmm1_simres,1) 
+#library(DHARMa)
+m1_simres <- simulateResiduals(m1)
 plot(m1_simres) 
 ```
 
@@ -171,15 +304,17 @@ plot(m1_simres)
 
 ## Confirmatory Statistics
 
-::: panel.tabset
+::: panel-tabset
 ## Summary
 
-```{r} summary(m1)}
+```{r}
+summary(m1)
 ```
 
 ## Coefficients
 
-```{r} coef(m1)}
+```{r}
+coef(m1)
 ```
 :::
 
