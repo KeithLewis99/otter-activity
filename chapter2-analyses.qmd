@@ -32,35 +32,30 @@ df_latPlot |>
 
 # Data
 
-## Structure/Contingency
-
-::: panel-tabset
-### Structure
+::: panel.tabset
+## Structure
 
 ```{r}
 str(df_latT)
 ```
 
-### Contingency table
+## Contingency table
 
 ```{r}
 df_latT |>
   group_by(site.location, latrine.present) |>
   summarise(count = n())
+
+df_latPlot |>
+  group_by(site.location, latrine.present) |>
+  summarise(count = n())
 ```
-:::
 
 ## Tree Height
 
-::: panel-tabset
-### Table
-
 ```{r}
 table(df_latT$site.location, df_latT$latrine.present, df_latT$treeheight)
-```
-
-### graph
-```{r}
+ggplot(df_latT, aes(x = treeheight)) + geom_bar() + facet_grid(site.location ~ latrine.present)
 
 ```
 :::
@@ -293,29 +288,24 @@ m1 <- glm(lat.pres ~ droad + site.location + dlogging,
 
 ```{r}
 #library(DHARMa)
-m1_simres <- simulateResiduals(m1)
-plot(m1_simres) 
+#m1_simres <- simulateResiduals(m1)
+#plot(m1_simres) 
 ```
 
 ## Independence
 :::
 
-## 
 
 ## Confirmatory Statistics
 
-::: panel-tabset
+::: panel.tabset
 ## Summary
 
-```{r}
-summary(m1)
-```
+`{r} summary(m1)`
 
 ## Coefficients
 
-```{r}
-coef(m1)
-```
+`{r} coef(m1)}`
 :::
 
 ## Predictions
