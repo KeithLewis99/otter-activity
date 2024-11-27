@@ -284,29 +284,38 @@ m1 <- glm(lat.pres ~ droad + site.location + dlogging,
 ## Diagnostics
 
 ::: panel-tabset
-## Homogeneity-normality
+### Homogeneity-normality
 
 ```{r}
-#library(DHARMa)
-#m1_simres <- simulateResiduals(m1)
-#plot(m1_simres) 
+library(DHARMa)
+m1_simres <- simulateResiduals(m1)
+plot(m1_simres) 
 ```
 
-## Independence
+### Independence
 :::
+```{r}
+print("Hi")
+```
+
 
 
 ## Confirmatory Statistics
 
-::: panel.tabset
-## Summary
+::: panel-tabset
+### Summary
 
-`{r} summary(m1)`
+```{r}
+summary(m1)
+```
 
-## Coefficients
+### Coefficients
 
-`{r} coef(m1)}`
+```{r}
+coef(m1)
+```
 :::
+
 
 ## Predictions
 
@@ -335,5 +344,3 @@ ggpredict(m1, terms = "site.location") |> plot()
 ggpredict(m1, terms = c("site.location", "droad")) |> plot()
 ```
 :::
-
-## 
