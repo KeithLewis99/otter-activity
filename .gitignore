@@ -10,5 +10,5 @@
 *.png
 
 # folders
-chapter2-analyses_files/*
+chapter2-analyses_files/*  
 figs/*

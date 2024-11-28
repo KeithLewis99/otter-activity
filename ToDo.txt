@@ -1,5 +1,9 @@
 ToDO
+# problem wiht DHARMA output: lots of warnings
+
 think about what you want to do here.
+Change UTMs to lat/long
+Find AB sites
 
 Diagnostics for log regression https://sscc.wisc.edu/sscc/pubs/RegDiag-R/logistic-regression.html#log_lin
 	- need lat/long
