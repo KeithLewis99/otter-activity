@@ -163,7 +163,7 @@ df_way_tnr <- df_way_tnr[-c(146),]
 str(df_way_tnr)
 
 
-df_latT <- left_join(df_latT, df_way_tnr, by= c("site.name" = "name"))
+#df_latT <- left_join(df_latT, df_way_tnr, by= c("site.name" = "name"))
 str(df_latT)
 
 
@@ -189,9 +189,13 @@ df_latT[df_latT$site.name.original == "SSR59",]
 df_latT <- df_latT[-509,]
 
 
-df_latT <- left_join(df_latT, df_way_ab, by= c("site.name.original" = "name"))
+tmp_location <- bind_rows(df_way_tnr, df_way_ab)
 
+df_latT <- left_join(df_latT, tmp_location, by= c("site.name.original" = "name"))
 
+df_latT |>
+  group_by(site.location, latrine.present) |>
+  summarise(count = n(), na_count = sum(is.na(latitude)))
 
 
 
