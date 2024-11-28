@@ -123,7 +123,7 @@ ggplot(df_latT, aes(droad, as.numeric(lat.pres), color=site.location)) +
   xlab("Dist to Road") + ylab("Pr (latrine)")
 
 
-# Model ----
+# Model-1 ----
 m1 <- glm(lat.pres ~ droad + site.location + dlogging, 
           family = binomial(link = "logit"),
           data = df_latT)
@@ -143,26 +143,37 @@ m1_simres <- simulateResiduals(m1)
 plot(m1_simres)
 # The normality is great; homogeneity OK
 
+# but why the warnings - I tried to look at the plot function and found that you can see the resids with the below
+
+# see resids
+tmp <- residuals(m1_simres)
+plot(density(tmp))
+
+# the first plot is produced with the plotQQunif function and it uses Scaled residuals but I was not able to perfectly reproduce it with the gap::qqunif - however, the warnings are from plot2
+plotQQunif(m1_simres)
+gap::qqunif(m1_simres$scaledResiduals)
+
+# the second plot which is made with "plotResiduals" and produces all the warnings - perahps because deviations 
+plotResiduals(m1_simres)
+
+tmp1 <- rank(m1_simres$fittedModel$fitted.values)
+tmp2 <- scale(tmp1,center=min(tmp1),scale=diff(range(tmp1)))
+plot(tmp2, m1_simres$scaledResiduals)
+
+
 ### 8 independence ----
 ### temporal independence
 # No temporal independence as these are just use/non-use sites
 
 ### spatial independence
-# join coordinates with data set - may not be required
-#bt.np <- left_join(bt.np, coords, by = c("Station_new" = "Station"))
-#str(bt.np)
-#bt.np[,c(2, 4, 6, 7, 11:13, 17, 21, 22)]
-
-# just coords for non-pool
-# coords.np <- as.data.frame(coords[c(1:4, 7:8, 10, 12:13, 15:18) ,]) 
-# nrow(coords.np)
-
 # recalculate resids with stations as the grouping variable
-bt_den.glmm1_simres_recalcSpace <- recalculateResiduals(bt_den.glmm1_simres, group = as.factor(bt.np$Station_new))
-unique(bt.np$Station_new) # OK - there are only 13 values in this because this is no pools and there are 4 pools + 1 destroyed pool so 18-5=13.
-#str(bt_den.glmm1_simres_recalcSpace)
+m1_simres_recalcSpace <- recalculateResiduals(m1_simres)
 
-testSpatialAutocorrelation(bt_den.glmm1_simres_recalcSpace, x = unique(bt.np$X), y = unique(bt.np$Y))
+m1_simres_recalcSpace$scaledResiduals
+# m1_simres_recalcSpace <- recalculateResiduals(m1_simres, group = as.factor(df_latT$latrine.present))
+
+
+testSpatialAutocorrelation(m1_simres_recalcSpace, x = unique(df_latT$longitude.x), y = unique(df_latT$latitude.x), na.rm=T)
 
 spatialAutoCorrBase_fun(bt.np, bt_den.glmm1_simres_recalcSpace)  
 bt.np.density.all <- spatialData_join(bt.np.density.station[-4,], bt_den.glmm1_simres_recalcSpace, coords.np)
@@ -237,6 +248,15 @@ ggpredict(m1, terms = c("site.location", "droad")) |> plot()
 
 
 
+# Model-2 ----
+library(glmmTMB)
+m2 <- glmmTMB(lat.pres ~ droad + site.location + dlogging, 
+          family = binomial(link = "logit"),
+          data = df_latT)
 
+# homogeneity/normality/linearity
+m2_simres <- simulateResiduals(m2)
+# str(bt_den.glmm1_simres,1)
+plot(m2_simres)
 
 # END ----
