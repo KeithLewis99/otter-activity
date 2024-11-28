@@ -5,6 +5,7 @@ library(ggplot2)
 library(GGally) 
 library(car)
 library(dplyr)
+library(DHARMa)
 
 # Latrine Presence ----
 ## EDA ----
@@ -128,6 +129,11 @@ m1 <- glm(lat.pres ~ droad + site.location + dlogging,
           family = binomial(link = "logit"),
           data = df_latT)
 
+test <- df_latT |>
+  filter(!is.na(latitude.x))
+m1 <- glm(lat.pres ~ droad + dlogging, 
+          family = binomial(link = "logit"),
+          data = test)
 
 #DHARMA
 ## https://cran.r-project.org/web/packages/DHARMa/vignettes/DHARMa.html
@@ -136,7 +142,6 @@ m1 <- glm(lat.pres ~ droad + site.location + dlogging,
 ## diagnostics ----
 ### 2 & 3 ----
 ## resids normal, homogeneous variance
-library(DHARMa)
 # homogeneity/normality/linearity
 m1_simres <- simulateResiduals(m1)
 # str(bt_den.glmm1_simres,1)
@@ -172,8 +177,12 @@ m1_simres_recalcSpace <- recalculateResiduals(m1_simres)
 m1_simres_recalcSpace$scaledResiduals
 # m1_simres_recalcSpace <- recalculateResiduals(m1_simres, group = as.factor(df_latT$latrine.present))
 
+testSpatialAutocorrelation(m1_simres, x = unique(df_latT$longitude.x), y = unique(df_latT$latitude.x))
 
-testSpatialAutocorrelation(m1_simres_recalcSpace, x = unique(df_latT$longitude.x), y = unique(df_latT$latitude.x), na.rm=T)
+testSpatialAutocorrelation(m1_simres_recalcSpace, x = unique(df_latT$longitude.x), y = unique(df_latT$latitude.x))
+
+testSpatialAutocorrelation(m1_simres_recalcSpace, x = unique(test$longitude.x), y = unique(test$latitude.x))
+
 
 spatialAutoCorrBase_fun(bt.np, bt_den.glmm1_simres_recalcSpace)  
 bt.np.density.all <- spatialData_join(bt.np.density.station[-4,], bt_den.glmm1_simres_recalcSpace, coords.np)
