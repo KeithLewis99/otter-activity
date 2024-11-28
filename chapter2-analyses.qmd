@@ -172,7 +172,7 @@ table(df_latT$lat.pres, df_latT$site.location)
 ### collinearity/relationship
 
 ```{r}
-#| warnings: false
+#| warning: false
 Scatter_Matrix <- ggpairs(df_latT,columns = c(2:7, 9), title = "Scatter Plot Matrix for latrine Dataset", axisLabels = "show") 
 Scatter_Matrix
 ```
@@ -292,6 +292,7 @@ I spent sometime trying to figure out why there are so many warnings with the di
 ### Homogeneity-normality
 
 ```{r}
+#| warning: false
 library(DHARMa)
 m1_simres <- simulateResiduals(m1)
 plot(m1_simres) 
