@@ -160,6 +160,8 @@ ggplot(df_latT, aes(dforagearea, y = seq(1, length(droad),1), fill = site.locati
 ```
 :::
 
+## Zeros/Collinearity
+
 ::: panel-tabset
 ### zeros
 
@@ -170,6 +172,7 @@ table(df_latT$lat.pres, df_latT$site.location)
 ### collinearity/relationship
 
 ```{r}
+#| warnings: false
 Scatter_Matrix <- ggpairs(df_latT,columns = c(2:7, 9), title = "Scatter Plot Matrix for latrine Dataset", axisLabels = "show") 
 Scatter_Matrix
 ```
@@ -283,6 +286,8 @@ m1 <- glm(lat.pres ~ droad + site.location + dlogging,
 
 ## Diagnostics
 
+I spent sometime trying to figure out why there are so many warnings with the diagnostics - see otter_analysis.R
+
 ::: panel-tabset
 ### Homogeneity-normality
 
@@ -294,11 +299,10 @@ plot(m1_simres)
 
 ### Independence
 :::
+
 ```{r}
 print("Hi")
 ```
-
-
 
 ## Confirmatory Statistics
 
@@ -315,7 +319,6 @@ summary(m1)
 coef(m1)
 ```
 :::
-
 
 ## Predictions
 
