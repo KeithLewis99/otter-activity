@@ -177,7 +177,7 @@ m1_simres_recalcSpace <- recalculateResiduals(m1_simres)
 m1_simres_recalcSpace$scaledResiduals
 # m1_simres_recalcSpace <- recalculateResiduals(m1_simres, group = as.factor(df_latT$latrine.present))
 
-testSpatialAutocorrelation(m1_simres, x = unique(df_latT$longitude.x), y = unique(df_latT$latitude.x))
+testSpatialAutocorrelation(m1_simres, x = unique(test$longitude.x), y = unique(test$latitude.x))
 
 testSpatialAutocorrelation(m1_simres_recalcSpace, x = unique(df_latT$longitude.x), y = unique(df_latT$latitude.x))
 
