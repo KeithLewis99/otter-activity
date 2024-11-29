@@ -1,5 +1,5 @@
 ToDO
-# problem wiht DHARMA output: lots of warnings
+# problem wiht outputs including DHARMA output: lots of warnings - I this is due to NA for lat/long and forage area and probably not a problem for now.  HOwever, it does mean that I can't do spatial autocorrelation yet.
 
 think about what you want to do here.
 Change UTMs to lat/long
@@ -10,14 +10,16 @@ Diagnostics for log regression https://sscc.wisc.edu/sscc/pubs/RegDiag-R/logisti
 	- spent most of the day on this - I think that its just best to use DHARMA but also need to check colinearity, outliers, and VIF
 	- DHARMA seems the way to go.  A bit sad that there hasn't been much progress on this in 25 years.
 	- dot plots - do for all data
-	- see Zuur for EDA guide
+	
 
-get lat/long data that Cote sent
+
 fix doy in camera activity
 
 get metadata
 
-read thesis and see what was done - i'm sure I can do more and better although these days, maybe not
+2024-11-28/29: sent an email to Cote requesting lat/long, forage area, and dlogging.
+
+read thesis and see what was done - i'm sure I can do more and better 
 
 make months into dates, not characters
 
@@ -31,3 +33,5 @@ Done:
 get the variables in the right type for df_latT and then do a logistic regression
 glm(y~ x, data = df_latT, dist = bernouli, link = logit)
 create an analysis file for the logistic regressions
+- see Zuur for EDA guide - implemented in quarto
+get lat/long data that Cote sent
