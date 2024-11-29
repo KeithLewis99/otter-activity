@@ -32,6 +32,7 @@ library(lubridate)
 library(magrittr)
 library(dplyr)
 library(tidyr)
+library(readr)
 # library(ggplot2)
 # library(plotly)
 # library(purrr)
@@ -46,9 +47,12 @@ options(dplyr.print_max = 1e9)
 # Data ----
 
 ## camera activity data----
-## 
-df_act <- read_excel("data/camera_activity_5-11-2014.xlsx")
+## I wanted to avoid bringing this in as a csv to avoid the extra step but read_excel is not bringing the dates in correctly.  It seems to be doing the old excel thing with dates and I spent a LOT of time trying to fix it.  Bascially, its bringing in some as character and some as numbers - none of my usual tricks worked - abandon and bring in csv
+# df_act <- read_excel("data/camera_activity_5-11-2014.xlsx")
+
+df_act <- readr::read_csv("data/camera_activity_5-11-2014.csv")
 str(df_act)
+df_act$date <- strptime(df_act$date, format = "%m/%d/%Y")
 
 # most of the data are date/time/site; the rest is temp and otters
 
@@ -64,13 +68,18 @@ df_act$site_name <- as.factor(df_act$site_name)
 
 summary(df_act)
 
+
+# fix and convert months
 unique(df_act$month)
-
-
+class(df_act$month)
 df_act$month[df_act$month == "Feburary"] <- "February"
 
-unique(df_act$month)
-barplot(prop.table(table(df_act$month)))
+str(df_act)
+# can't figure out how to convert month to a data - use backdoor by extracting from date
+df_act$month_test <- month(df_act$date, label = T)
+
+barplot(prop.table(table(df_act$month_test)))
+
 # probably want to order this by Month so change with lubridate I think- 
 
 # no records of doy or day of study from 11169 onwards 
@@ -82,6 +91,7 @@ df_act[is.na(df_act$doy), 10]
 
 # Otters are detected and number
 plot(density(df_act$numberofOtter))
+
 
 
 ## latrine distributions ----
@@ -196,8 +206,6 @@ df_latT <- left_join(df_latT, tmp_location, by= c("site.name.original" = "name")
 df_latT |>
   group_by(site.location, latrine.present) |>
   summarise(count = n(), na_count = sum(is.na(latitude)))
-
-
 
 
 # END ----
