@@ -1,5 +1,5 @@
 ToDO
-# problem wiht outputs including DHARMA output: lots of warnings - I this is due to NA for lat/long and forage area and probably not a problem for now.  HOwever, it does mean that I can't do spatial autocorrelation yet.
+
 
 think about what you want to do here.
 Change UTMs to lat/long
@@ -17,13 +17,12 @@ fix doy in camera activity
 
 get metadata
 
-2024-11-28/29: sent an email to Cote requesting lat/long, forage area, and dlogging.
+2024-11-28/29: sent an email to Cote requesting lat/long, forage area, and dlogging.  Need thse to do spatial autocorrelation and to know whether i'm including other variables.
 
 read thesis and see what was done - i'm sure I can do more and better 
 
-make months into dates, not characters
 
-fix variable types in latrine data as they are all character - make sure they don't change
+
 
 
 Review: https://stats.stackexchange.com/questions/144121/logistic-regression-bernoulli-vs-binomial-response-variables
@@ -35,3 +34,6 @@ glm(y~ x, data = df_latT, dist = bernouli, link = logit)
 create an analysis file for the logistic regressions
 - see Zuur for EDA guide - implemented in quarto
 get lat/long data that Cote sent
+# problem wiht outputs including DHARMA output: lots of warnings - this is due to NA for lat/long and forage area and probably not a problem for now.  
+fix variable types in latrine data as they are all character - make sure they don't change
+make months into dates, not characters
