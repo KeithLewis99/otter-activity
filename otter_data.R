@@ -2,6 +2,10 @@
 
 # see notes from 2024-09-20 (notebook) for questions
 
+# but at some point, we realized that there were issues with the data (we were lacking much of it) that had been provided and it was decided that it was easier just to start over again.  So, Cote found David Forsey who kindly agreed to work on the project and redo all the distance analyses.  
+
+# So, much of below can be ignored.  
+
 # Set up a project - see the below link for directions.
 #https://happygitwithr.com/rstudio-git-github.html
 
@@ -22,6 +26,7 @@ if(!dir.exists("output"))dir.create("output") # for tables and figures
 if(!dir.exists("ms"))dir.create("ms") # manuscript
 if(!dir.exists("report"))dir.create("report") #for rmd report
 if(!dir.exists("refs"))dir.create("refs") #for rmd report
+if(!dir.exists("scripts"))dir.create("scripts") #for rmd report
 
 
 # Start----
@@ -203,10 +208,64 @@ tmp_location <- bind_rows(df_way_tnr, df_way_ab)
 
 df_latT <- left_join(df_latT, tmp_location, by= c("site.name.original" = "name"))
 
+write.csv(df_latT, "data_derived/latrine_landscape_v2.csv")
 df_latT |>
   group_by(site.location, latrine.present) |>
   summarise(count = n(), na_count = sum(is.na(latitude)))
 
+df_latT |>
+  group_by(site.location, latrine.present) |>
+  summarise(count = n(), na_count = sum(is.na(latitude)))
+
+
+# Forsey data ----
+
+df_lat_new <- readr::read_csv("data/Otter_Distances_Update07_17_2026_otter.csv")
+str(df_lat_new)
+df_lat_new <- df_lat_new |>
+  mutate(type = "latrine")
+
+
+df_con_new <- readr::read_csv("data/Otter_Distances_Update07_17_2026_control.csv")
+str(df_con_new)
+df_con_new <- df_con_new |>
+  mutate(type = "control") |>
+  rename(ResourceRoad_FID	= Resource_Road_FID,
+         ResourceRoad_DIST	= Resource_Road_DIST, 
+         RiverMouth_FID	= River_Mouth_FID, 
+         RiverMouth_DIST	= River_Mouth_DIST
+  )
+
+df_con_new <- df_con_new |> 
+  relocate( All_Road_FID, All_Road_DIST, .after = River_DIST)
+
+df_all_new <- bind_rows(df_lat_new, df_con_new)
+str(df_all_new)
+
+df_all_new <- df_all_new |>
+  mutate(newid = row_number())
+
+df_all_new <- df_all_new |>
+  rename(object_id = 'OBJECTID *',
+        road_national_dist = NationalRoadNetwork_DIST,
+         road_resource_dist = ResourceRoad_DIST,
+         river_mouth_dist = RiverMouth_DIST,
+         fresh_lake_dist = FreshLake_DIST,
+         river_dist = River_DIST,
+         all_road_dist = All_Road_DIST,
+         cabin_dist = Cabin_DIST,
+        lat = Lat,
+        long = Long
+  )
+str(df_all_new)
+
+
+
+# this code comes from otter_figures_maps.R
+## see 'study area with polygon' - I created the polygon around Alexander Bay so that I could sepearte those sites from Terra Nova National Park.  
+
+# need to go to otter_figures_maps to create the 'location' variable 
+write.csv(df_all_new, "data_derived/df_all_new.csv")
 
 # END ----
 # set up some binary data
