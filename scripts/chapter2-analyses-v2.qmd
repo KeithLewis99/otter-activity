@@ -1,0 +1,210 @@
+---
+title: "Chapter2-analyses"
+format: 
+  html:
+    toc: true
+    code-line-numbers: true
+execute: 
+  echo: false
+editor: visual
+---
+
+```{r}
+#| echo: false
+#| output: false
+library(ggplot2) 
+library(GGally) 
+library(car)
+library(dplyr)
+library(DHARMa)
+library(ggeffects)
+library(purrr)
+
+df1 <- read.csv("../data_derived/df_all_new.csv")
+
+vars <- c(
+  "road_national_dist",
+  "road_resource_dist",
+  "all_road_dist",
+  "river_mout_dist",
+  "fresh_lake_dist",
+  "river_dist",
+  "cabin_dist"
+)
+
+## Outliers - box/violin plots
+plots <- vars %>%
+  set_names() %>%
+  map(~ ggplot(df1, aes(x = .data[[.x]])) +
+        geom_histogram() +
+        facet_grid(location ~ type) +
+        labs(x = .x)
+      )
+
+
+if(!dir.exists("../figs/outliers"))dir.create("../figs/outliers")
+folder <- "../figs/outliers/"
+walk2(
+  plots,
+  names(plots),
+  ~ ggsave(
+    filename = paste0(folder, .y, ".png"),
+    plot = .x,
+    width = 8,
+    height = 6
+  )
+)
+
+
+## Outliers-Cleavland
+plots_cl <- vars %>%
+  set_names() %>%
+  map(~ ggplot(df1, aes(x = .data[[.x]], y = seq_len(nrow(df1)),
+               fill = location,
+               colour = location
+               )
+      ) +
+        geom_point() +
+        facet_grid(location ~ type) +
+        labs(x = .x,
+             y = "ID")
+  )
+
+if(!dir.exists("../figs/outliers_cleavland"))dir.create("../figs/outliers_cleavland")
+folder <- "../figs/outliers_cleavland/"
+walk2(
+  plots_cl,
+  names(plots_cl),
+  ~ ggsave(
+    filename = paste0(folder, .y, ".png"),
+    plot = .x,
+    width = 8,
+    height = 6
+  )
+)
+```
+
+# Data
+
+::: panel-tabset
+### Structure
+
+```{r}
+str(df1)
+```
+
+### Contingency table
+
+```{r}
+df1 |>
+  group_by(location, type) |>
+  summarise(count = n())
+```
+:::
+
+
+# Exploratory Data Analysis
+
+
+## Outliers - box/violin plots
+
+::: panel-tabset
+### All
+
+
+### Road
+
+```{r}
+plots$road_national_dist
+```
+
+### Cabin
+
+```{r}
+plots$cabin_dist
+```
+
+### Logging
+
+```{r}
+plots$road_resource_dist
+```
+
+### Stream mouth
+
+```{r}
+plots$river_mout_dist
+```
+
+### Freshwater
+
+```{r}
+plots$fresh_lake_dist
+```
+
+### Forage Area
+
+:::
+
+
+
+
+
+## Outliers-Cleavland
+
+::: panel-tabset
+### All
+
+
+### Road
+
+```{r}
+plots_cl$road_national_dist
+```
+
+### Cabin
+
+```{r}
+plots_cl$cabin_dist
+```
+
+### Logging
+
+```{r}
+plots_cl$road_resource_dist
+```
+
+### Stream mouth
+
+```{r}
+plots_cl$river_mout_dist
+```
+
+### Freshwater
+
+```{r}
+plots_cl$fresh_lake_dist
+```
+
+### Forage Area
+
+:::
+
+
+## Zeros/Collinearity
+
+::: panel-tabset
+### zeros
+
+```{r}
+table(df1$type, df1$location) 
+```
+
+### collinearity/relationship
+
+```{r}
+#| warning: false
+Scatter_Matrix <- ggpairs(df1,columns = c(2:7, 9), title = "Scatter Plot Matrix for latrine Dataset", axisLabels = "show") 
+Scatter_Matrix
+```
+:::

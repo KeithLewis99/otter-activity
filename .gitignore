@@ -8,7 +8,12 @@
 *.html
 *.xlsx
 *.png
+*.txt
+*.pdf
 
 # folders
-chapter2-analyses_files/*  
+chapter2-analyses_files/* 
+chapter2-analyses_files-v2_files/*  
 figs/*
+data/
+refs/
