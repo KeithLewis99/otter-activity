@@ -1,9 +1,15 @@
 ToDO
 
+0 distance to logging for random sites in TN
+Have all the random sites but I don't have the all the latrine sites, especially for AB.
+
+Seems like I have the random sites but no where near all the actual sites.  Then, there is the problem of lining them up.
 
 think about what you want to do here.
 Change UTMs to lat/long
 Find AB sites
+
+ggpredict v emmeans
 
 Diagnostics for log regression https://sscc.wisc.edu/sscc/pubs/RegDiag-R/logistic-regression.html#log_lin
 	- need lat/long
